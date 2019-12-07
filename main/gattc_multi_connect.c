@@ -37,7 +37,6 @@
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "IoTDevice/IoTDevice.h"
 
 #define GATTC_TAG "GATTC_MULTIPLE_DEMO"
 #define REMOTE_SERVICE_UUID        0xFFE0
@@ -365,77 +364,6 @@ static void gattc_profile_a_event_handler(esp_gattc_cb_event_t event, esp_gatt_i
     }
 }
 
-static void PingTest()
-{
-    // Test feedback loop
-    str[0] = B_letter;
-    if(++B_letter > 'Z')
-        B_letter = 'A';
-
-    //vTaskDelay(150 / portTICK_PERIOD_MS);
-
-    esp_ble_gattc_write_char( gl_profile_tab[PROFILE_B_APP_ID].gattc_if,
-                        gl_profile_tab[PROFILE_B_APP_ID].conn_id,
-                        gl_profile_tab[PROFILE_B_APP_ID].char_handle,
-                        1,
-                        str,
-                        ESP_GATT_WRITE_TYPE_RSP,
-                        ESP_GATT_AUTH_REQ_NONE);
-}
-
-static char lastchar;
-static int recvcnt = 0;
-static void RecvTest(esp_ble_gattc_cb_param_t *p_data)
-{
-    if(p_data->notify.value_len > 0)
-    {
-        recvcnt++;
-        if((lastchar != p_data->notify.value[0] - 1) && (lastchar != 'Z' && p_data->notify.value[0] != 'A'))
-        {
-            ESP_LOGE(GATTC_TAG, "%d: %d != %d", recvcnt,  p_data->notify.value[0], lastchar);
-        }
-        lastchar =  p_data->notify.value[0];
-        //ESP_LOGI(GATTC_TAG, "%d, %c", p_data->notify.value[0], p_data->notify.value[0]);
-    }
-    else
-    {
-        ESP_LOGE(GATTC_TAG, "Notify has no length.");
-    }
-}
-
-static void RecvTestNotify(esp_ble_gattc_cb_param_t *p_data)
-{
-    if(p_data->notify.value_len > 0)
-    {
-        recvcnt++;
-
-        //ESP_LOGI(GATTC_TAG, "%d, %c", p_data->notify.value[0], p_data->notify.value[0]);
-
-        if((lastchar != p_data->notify.value[0] - 1) && (lastchar != 'Z' && p_data->notify.value[0] != 'A'))
-        {
-            ESP_LOGE(GATTC_TAG, "%d: %d != %d", recvcnt,  p_data->notify.value[0], lastchar);
-        }
-        lastchar =  p_data->notify.value[0];
-
-        str[0] = lastchar;
-
-        //vTaskDelay(150 / portTICK_PERIOD_MS);
-
-        esp_ble_gattc_write_char( gl_profile_tab[PROFILE_B_APP_ID].gattc_if,
-                        gl_profile_tab[PROFILE_B_APP_ID].conn_id,
-                        gl_profile_tab[PROFILE_B_APP_ID].char_handle,
-                        1,
-                        str,
-                        ESP_GATT_WRITE_TYPE_RSP,
-                        ESP_GATT_AUTH_REQ_NONE);
-        //ESP_LOGI(GATTC_TAG, "%d, %c", p_data->notify.value[0], p_data->notify.value[0]);
-    }
-    else
-    {
-        ESP_LOGE(GATTC_TAG, "Notify has no length.");
-    }
-}
-
 static void gattc_profile_b_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if, esp_ble_gattc_cb_param_t *param)
 {
     esp_ble_gattc_cb_param_t *p_data = (esp_ble_gattc_cb_param_t *)param;
@@ -589,7 +517,7 @@ static void gattc_profile_b_event_handler(esp_gattc_cb_event_t event, esp_gatt_i
     case ESP_GATTC_NOTIFY_EVT:
         //ESP_LOGI(GATTC_TAG, "B ESP_GATTC_NOTIFY_EVT, Receive notify value: %c, %d, Sending %c %d", p_data->notify.value[0], p_data->notify.value[0], B_letter, B_letter);
         //esp_log_buffer_hex(GATTC_TAG, p_data->notify.value, p_data->notify.value_len);
-        RecvTestNotify(p_data);
+        //RecvTestNotify(p_data);
 
         break;
     case ESP_GATTC_WRITE_DESCR_EVT:
@@ -988,60 +916,6 @@ static void esp_gattc_cb(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if, esp
     } while (0);
 }
 
-#define BLINK_IO    2
-
-void blink()
-{
-	for (int i = 0; i < 4; i++)
-	{
-		GPIODigitalWrite(BLINK_IO, 1);
-		//printf("blink %d\n", BLINK_IO);
-		IoTDelay(100);
-		GPIODigitalWrite(BLINK_IO, 0);
-		IoTDelay(100);
-	}
-}
-
-void blinkyblue()
-{
-	for (int i = 0; i < 3; i++)
-	{
-		GPIODigitalWrite(BLINK_IO, 1);
-		//printf("blink %d\n", BLINK_IO);
-		IoTDelay(100);
-		GPIODigitalWrite(BLINK_IO, 0);
-		IoTDelay(100);
-	}
-}
-
-void blinkyboo()
-{
-	for (int i = 0; i < 2; i++)
-	{
-		GPIODigitalWrite(BLINK_IO, 1);
-		//printf("blink %d\n", BLINK_IO);
-		IoTDelay(100);
-		GPIODigitalWrite(BLINK_IO, 0);
-		IoTDelay(100);
-	}
-}
-
-void blinkyLongShort()
-{
-	for (int i = 0; i < 1; i++)
-	{
-		//printf("blink %d\n", BLINK_IO);
-		GPIODigitalWrite(BLINK_IO, 1);
-		IoTDelay(500);
-		GPIODigitalWrite(BLINK_IO, 0);
-		IoTDelay(500);
-		GPIODigitalWrite(BLINK_IO, 1);
-		IoTDelay(200);
-		GPIODigitalWrite(BLINK_IO, 0);
-		IoTDelay(200);
-	}
-}
-
 static esp_ble_adv_params_t adv_params = {
     .adv_int_min        = 0x20,
     .adv_int_max        = 0x40,
@@ -1053,19 +927,8 @@ static esp_ble_adv_params_t adv_params = {
     .adv_filter_policy = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY,
 };
 
-void ShowAdvertisement()
-{
-    esp_ble_gap_start_advertising(&adv_params);
-
-    IoTDelay(5000);
-
-    esp_ble_gap_stop_advertising();
-}
-
 void app_main(void)
 {
-    GPIOMode(BLINK_IO, 1);
-
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK(nvs_flash_erase());
@@ -1099,8 +962,6 @@ void app_main(void)
         ESP_LOGE(GATTC_TAG, "%s enable bluetooth failed: %s\n", __func__, esp_err_to_name(ret));
         return;
     }
-
-    //ShowAdvertisement();
 
     //register the  callback function to the gap module
     ret = esp_ble_gap_register_callback(esp_gap_cb);
@@ -1139,52 +1000,6 @@ void app_main(void)
         ESP_LOGE(GATTC_TAG, "set local  MTU failed, error code = %x", ret);
     }
 
-    // while(!all_connected)
-    // {
-    //     vTaskDelay(150 / portTICK_PERIOD_MS);
-    // }
-
     ESP_LOGI(GATTC_TAG, "========== Ready to send some data ==============");
-
-    while(1)
-    {
-        if(all_connected)
-        {
-            blinkyLongShort();
-        }
-        else if(!conn_device_a)
-        {
-            blinkyblue();
-        }
-        else if(!conn_device_b)
-        {
-            blinkyblue();
-        }
-        IoTDelay(1000);
-    }
-
-    // while(1)
-    // {
-    //     uint8_t* str = (uint8_t*)"Somethign to say";
-    //     esp_ble_gattc_write_char( gl_profile_tab[PROFILE_A_APP_ID].gattc_if,
-    //                         gl_profile_tab[PROFILE_A_APP_ID].conn_id,
-    //                         gl_profile_tab[PROFILE_A_APP_ID].char_handle,
-    //                         16,
-    //                         str,
-    //                         ESP_GATT_WRITE_TYPE_RSP,
-    //                         ESP_GATT_AUTH_REQ_NONE);
-
-    //     esp_ble_gattc_write_char( gl_profile_tab[PROFILE_B_APP_ID].gattc_if,
-    //                         gl_profile_tab[PROFILE_B_APP_ID].conn_id,
-    //                         gl_profile_tab[PROFILE_B_APP_ID].char_handle,
-    //                         16,
-    //                         str,
-    //                         ESP_GATT_WRITE_TYPE_RSP,
-    //                         ESP_GATT_AUTH_REQ_NONE);
-
-
-    //     vTaskDelay(3150 / portTICK_PERIOD_MS);
-    // }
-
 }
 
