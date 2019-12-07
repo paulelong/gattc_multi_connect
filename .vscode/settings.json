@@ -1,0 +1,9 @@
+{
+    "terminal.integrated.env.windows": {
+        "hi": "bye",
+        "path": "C:/WINDOWS/SYSTEM32;C:/WINDOWS;C:/USERS/PAUL/TOOLBOX;C:/WINDOWS/SYSTEM32/WINDOWSPOWERSHELL/V1.0/;C:/PROGRAM FILES/MICROSOFT NETWORK MONITOR 3/;C:/Program Files/WindowsPowerShell/Scripts;C:/WINDOWS/System32/WindowsPowerShell/v1.0/;C:/Program Files/Git/cmd;C:/WINDOWS/System32/OpenSSH/;C:/Program Files/dotnet/;C:/Users/Paul/Documents/Bin;C:/Program Files (x86)/Notepad++;C:/Users/Paul/AppData/Local/Microsoft/WindowsApps;C:/Program Files/Microsoft VS Code/bin;E:/Users/Paul/AppData/Local/Programs/Microsoft VS Code/bin;E:/Users/Paul/Documents/Work/PowerShell;E:/Users/Paul/Documents/WindowsPowerShell;E:/Users/Paul/.espressif/tools/xtensa-esp32-elf/esp32-2019r1-8.2.0/xtensa-esp32-elf/bin;E:/Users/Paul/.espressif/tools/esp32ulp-elf/2.28.51.20170517/esp32ulp-elf-binutils/bin;E:/Users/Paul/.espressif/tools/cmake/3.13.4/bin;E:/Users/Paul/.espressif/tools/openocd-esp32/v0.10.0-esp32-20190708/openocd-esp32/bin;E:/Users/Paul/.espressif/tools/mconf/v4.6.0.0-idf-20190628/;E:/Users/Paul/.espressif/tools/ninja/1.9.0/;E:/Users/Paul/.espressif/tools/idf-exe/1.0.1/;E:/Users/Paul/.espressif/tools/ccache/3.7/;E:/Users/Paul/.espressif/python_env/idf4.1_py3.7_env/Scripts;E:/users/Paul/AppData/Local/Programs/Python/Python37-32"
+    },
+    "files.associations": {
+        "esp_spi_flash.h": "c"
+    }
+}

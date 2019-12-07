@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+        "request": "launch",
+        "name": "Flash and Run",
+        "target": "./build/blink.elf",
+        "cwd": "${workspaceFolder}",
+        "autorun":[
+            "idf.py -p com7 monitor"
+        ]
+        }
+    ],
+    "preLunachTask": "flash"
+}
