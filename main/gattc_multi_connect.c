@@ -711,13 +711,13 @@ static void gattc_profile_c_event_handler(esp_gattc_cb_event_t event, esp_gatt_i
         {
             write_char_data[i] = i % 256;
         }
-        // esp_ble_gattc_write_char( gattc_if,
-        //                           gl_profile_tab[PROFILE_C_APP_ID].conn_id,
-        //                           gl_profile_tab[PROFILE_C_APP_ID].char_handle,
-        //                           sizeof(write_char_data),
-        //                           write_char_data,
-        //                           ESP_GATT_WRITE_TYPE_RSP,
-        //                           ESP_GATT_AUTH_REQ_NONE);
+        esp_ble_gattc_write_char( gattc_if,
+                                  gl_profile_tab[PROFILE_C_APP_ID].conn_id,
+                                  gl_profile_tab[PROFILE_C_APP_ID].char_handle,
+                                  sizeof(write_char_data),
+                                  write_char_data,
+                                  ESP_GATT_WRITE_TYPE_RSP,
+                                  ESP_GATT_AUTH_REQ_NONE);
         break;
     case ESP_GATTC_WRITE_CHAR_EVT:
         if (p_data->write.status != ESP_GATT_OK){
@@ -889,17 +889,6 @@ static void esp_gattc_cb(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if, esp
         }
     } while (0);
 }
-
-static esp_ble_adv_params_t adv_params = {
-    .adv_int_min        = 0x20,
-    .adv_int_max        = 0x40,
-    .adv_type           = ADV_TYPE_IND,
-    .own_addr_type      = BLE_ADDR_TYPE_PUBLIC,
-    //.peer_addr            =
-    //.peer_addr_type       =
-    .channel_map        = ADV_CHNL_ALL,
-    .adv_filter_policy = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY,
-};
 
 void app_main(void)
 {
