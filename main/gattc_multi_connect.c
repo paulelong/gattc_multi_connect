@@ -30,13 +30,11 @@
 #include "esp_bt.h"
 #include "esp_gap_ble_api.h"
 #include "esp_gattc_api.h"
-#include "esp_gatts_api.h"
 #include "esp_gatt_defs.h"
 #include "esp_bt_main.h"
 #include "esp_gatt_common_api.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 
 #define GATTC_TAG "GATTC_MULTIPLE_DEMO"
 #define REMOTE_SERVICE_UUID        0xFFE0
@@ -80,8 +78,8 @@ static bool get_service_a   = false;
 static bool get_service_b   = false;
 static bool get_service_c   = false;
 
-static char B_letter        = 'A';
-static uint8_t str[4];
+// static char B_letter        = 'A';
+// static uint8_t str[4];
 
 static bool Isconnecting    = false;
 static bool stop_scan_done  = false;
@@ -297,21 +295,7 @@ static void gattc_profile_a_event_handler(esp_gattc_cb_event_t event, esp_gatt_i
     }
     case ESP_GATTC_NOTIFY_EVT:
         ESP_LOGI(GATTC_TAG, "A ESP_GATTC_NOTIFY_EVT, Receive notify value: %c, %d", p_data->notify.value[0], p_data->notify.value_len);
-
-        if(p_data->notify.value > 0)
-        {
-            esp_log_buffer_hex(GATTC_TAG, p_data->notify.value, p_data->notify.value_len);
-
-            uint8_t c = p_data->notify.value[1];
-            
-            esp_ble_gattc_write_char( gl_profile_tab[PROFILE_B_APP_ID].gattc_if,
-                            gl_profile_tab[PROFILE_B_APP_ID].conn_id,
-                            gl_profile_tab[PROFILE_B_APP_ID].char_handle,
-                            1,
-                            &c,
-                            ESP_GATT_WRITE_TYPE_RSP,
-                            ESP_GATT_AUTH_REQ_NONE);
-        }                        
+                  
         break;
     case ESP_GATTC_WRITE_DESCR_EVT:
         if (p_data->write.status != ESP_GATT_OK){
@@ -322,7 +306,7 @@ static void gattc_profile_a_event_handler(esp_gattc_cb_event_t event, esp_gatt_i
         uint8_t write_char_data[35];
         for (int i = 0; i < sizeof(write_char_data); ++i)
         {
-                write_char_data[i] = i % 256;
+            write_char_data[i] = i % 256;
         }
         esp_ble_gattc_write_char( gattc_if,
                                   gl_profile_tab[PROFILE_A_APP_ID].conn_id,
@@ -339,8 +323,7 @@ static void gattc_profile_a_event_handler(esp_gattc_cb_event_t event, esp_gatt_i
             ESP_LOGI(GATTC_TAG, "A write char success");
         }
 
-        if(!all_connected)
-            start_scan();
+        start_scan();
         break;
     case ESP_GATTC_SRVC_CHG_EVT: {
         esp_bd_addr_t bda;
@@ -515,10 +498,8 @@ static void gattc_profile_b_event_handler(esp_gattc_cb_event_t event, esp_gatt_i
         break;
     }
     case ESP_GATTC_NOTIFY_EVT:
-        //ESP_LOGI(GATTC_TAG, "B ESP_GATTC_NOTIFY_EVT, Receive notify value: %c, %d, Sending %c %d", p_data->notify.value[0], p_data->notify.value[0], B_letter, B_letter);
-        //esp_log_buffer_hex(GATTC_TAG, p_data->notify.value, p_data->notify.value_len);
-        //RecvTestNotify(p_data);
-
+        ESP_LOGI(GATTC_TAG, "ESP_GATTC_NOTIFY_EVT, Receive notify value:");
+        esp_log_buffer_hex(GATTC_TAG, p_data->notify.value, p_data->notify.value_len);
         break;
     case ESP_GATTC_WRITE_DESCR_EVT:
         if (p_data->write.status != ESP_GATT_OK){
@@ -817,7 +798,6 @@ static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *par
                 stop_scan_done = true;
                 esp_ble_gap_stop_scanning();
                 ESP_LOGI(GATTC_TAG, "all devices are connected");
-                all_connected = true;
                 break;
             }
             if (adv_name != NULL) {
