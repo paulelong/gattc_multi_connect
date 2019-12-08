@@ -78,12 +78,8 @@ static bool get_service_a   = false;
 static bool get_service_b   = false;
 static bool get_service_c   = false;
 
-// static char B_letter        = 'A';
-// static uint8_t str[4];
-
 static bool Isconnecting    = false;
 static bool stop_scan_done  = false;
-static bool all_connected   = false;
 
 static esp_gattc_char_elem_t  *char_elem_result_a   = NULL;
 static esp_gattc_descr_elem_t *descr_elem_result_a  = NULL;
@@ -527,8 +523,7 @@ static void gattc_profile_b_event_handler(esp_gattc_cb_event_t event, esp_gatt_i
             //ESP_LOGI(GATTC_TAG, "B Write char success");
         }
 
-        if(!all_connected)
-            start_scan();
+        start_scan();
         break;
     case ESP_GATTC_SRVC_CHG_EVT: {
         esp_bd_addr_t bda;
@@ -730,8 +725,7 @@ static void gattc_profile_c_event_handler(esp_gattc_cb_event_t event, esp_gatt_i
             break;
         }
         ESP_LOGI(GATTC_TAG, "Write char success");
-        if(!all_connected)
-            start_scan();
+        start_scan();
         break;
     case ESP_GATTC_SRVC_CHG_EVT: {
         esp_bd_addr_t bda;
