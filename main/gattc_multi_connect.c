@@ -39,6 +39,8 @@
 #define GATTC_TAG "GATTC_MULTIPLE_DEMO"
 #define REMOTE_SERVICE_UUID        0xFFE0
 #define REMOTE_NOTIFY_CHAR_UUID    0xFFE1
+//#define REMOTE_SERVICE_UUID        0xDFB0
+//#define REMOTE_NOTIFY_CHAR_UUID    0xDFB1
 
 /* register three profiles, each profile corresponds to one connection,
    which makes it easy to handle each connection event */
@@ -262,7 +264,7 @@ static void gattc_profile_a_event_handler(esp_gattc_cb_event_t event, esp_gatt_i
                                                                      descr_elem_result_a,
                                                                      &count);
                 if (ret_status != ESP_GATT_OK){
-                    ESP_LOGE(GATTC_TAG, "esp_ble_gattc_get_descr_by_char_handle error");
+                    ESP_LOGE(GATTC_TAG, "A esp_ble_gattc_get_descr_by_char_handle error %d", ret_status);
                 }
 
                 /* Every char has only one descriptor in our 'ESP_GATTS_DEMO' demo, so we used first 'descr_elem_result' */
@@ -277,7 +279,7 @@ static void gattc_profile_a_event_handler(esp_gattc_cb_event_t event, esp_gatt_i
                 }
 
                 if (ret_status != ESP_GATT_OK){
-                    ESP_LOGE(GATTC_TAG, "esp_ble_gattc_write_char_descr error");
+                    ESP_LOGE(GATTC_TAG, "A esp_ble_gattc_write_char_descr error");
                 }
 
                 /* free descr_elem_result */
@@ -795,8 +797,8 @@ static void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *par
                 break;
             }
             if (adv_name != NULL) {
-
-                if (strlen(remote_device_name[0]) == adv_name_len && strncmp((char *)adv_name, remote_device_name[0], adv_name_len) == 0) {
+                int minlen = (strlen(remote_device_name[0]) < adv_name_len) ? strlen(remote_device_name[0]) : adv_name_len ;
+                if (strncmp((char *)adv_name, remote_device_name[0], minlen) == 0) {
                     if (conn_device_a == false) {
                         conn_device_a = true;
                         ESP_LOGI(GATTC_TAG, "Searched device %s", remote_device_name[0]);
